@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Tile : MonoBehaviour
+public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
 {
     [SerializeField] private Color _baseColor, _offsetColor;
     [SerializeField] private SpriteRenderer _renderer;
@@ -11,13 +12,18 @@ public class Tile : MonoBehaviour
         _renderer.color = isOffset ? _offsetColor : _baseColor;
     }
 
-    public void OnMouseEnter()
+    public void OnPointerEnter(PointerEventData eventData)
     {
         _highlight.SetActive(true);
     }
 
-    public void OnMouseExit() 
+    public void OnPointerExit(PointerEventData eventData) 
     { 
         _highlight.SetActive(false);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        //
     }
 }
