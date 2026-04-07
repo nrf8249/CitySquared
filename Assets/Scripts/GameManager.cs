@@ -3,7 +3,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public GameState GameState;
+    public GameState State;
 
     void Awake()
     {
@@ -17,25 +17,25 @@ public class GameManager : MonoBehaviour
 
     public void ChangeState(GameState newState)
     {
-        GameState = newState;
-        switch (newState)
-        {
+        State = newState;
+        switch (newState){   
             case GameState.GenerateGrid:
                 GridManager.Instance.GenerateGrid();
                 break;
             case GameState.GameRunning:
+                // Start game logic here
                 break;
             case GameState.GameOver:
+                // Handle game over logic here
                 break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }
     }
-
-    public enum GameState
-    {
-        GenerateGrid = 0,
-        GameRunning = 1,
-        GameOver = 2
-    }
 }
+
+public enum GameState
+{
+    GenerateGrid = 0,
+    GameRunning = 1,
+    GameOver = 2
+}
+

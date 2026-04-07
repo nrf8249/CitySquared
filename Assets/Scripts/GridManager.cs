@@ -1,12 +1,16 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class GridManager : MonoBehaviour
 {
-    public static GridManager Instance { get; private set; }
+    public static GridManager Instance;
 
     [SerializeField] private int _width, _height;
     [SerializeField] private Tile tilePrefab;
     [SerializeField] private Transform _cam;
+    private Dictionary<Vector2, Tile> _tiles;
+    private Tile selectedTile;
 
     void Awake()
     {
@@ -15,6 +19,7 @@ public class GridManager : MonoBehaviour
 
     public void GenerateGrid()
     {
+        _tiles = new Dictionary<Vector2, Tile>();
         for (int x = 0; x < _width; x++)
         {
             for (int y = 0; y < _height; y++)
@@ -24,6 +29,8 @@ public class GridManager : MonoBehaviour
 
                 var isOffset = ((x % 2 == 0 & y % 2 != 0) || (x % 2 != 0 & y % 2 == 0));
                 spawnedTile.Init(isOffset);
+
+                _tiles[new Vector2(x, y)] = spawnedTile;
             }
         }
 
@@ -31,4 +38,22 @@ public class GridManager : MonoBehaviour
         GameManager.Instance.ChangeState(GameState.GameRunning);
     }
 
+    public Tile GetSelectedTile()
+    {
+        if (selectedTile != null)
+        {
+            return selectedTile;
+        }
+        else
+        {
+            Debug.LogError("No tile selected!");
+            return null;
+        }
+    }
+
+    public void SetSelectedTile(Tile tile)
+    {
+        selectedTile = tile;
+        Debug.Log($"Selected tile at position: {tile.transform.position}");
+    }
 }
