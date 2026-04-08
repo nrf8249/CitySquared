@@ -10,7 +10,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private bool _isOccupied;
     private GameObject _occupyingBuilding;
     private TileType _currentType;
-    private UpgradeLevel _currentUpgradeLevel;
+    private int _currentUpgradeLevel;
 
     public void Init(bool isOffset)
     {
@@ -18,7 +18,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         _isOccupied = false;
         _occupyingBuilding = null;
         _currentType = TileType.Empty;
-        _currentUpgradeLevel = UpgradeLevel.Level1;
+        _currentUpgradeLevel = 0;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -74,17 +74,17 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return _currentType;
     }
 
-    public void UpgradeTile(UpgradeLevel level)
+    public void UpgradeTile(int level)
     {
         switch (level)
         {
-            case UpgradeLevel.Level1:
+            case 1:
                 // Implement logic for Level 1 upgrade
                 break;
-            case UpgradeLevel.Level2:
+            case 2:
                 // Implement logic for Level 2 upgrade
                 break;
-            case UpgradeLevel.Level3:
+            case 3:
                 // Implement logic for Level 3 upgrade
                 break;
             default:
@@ -93,7 +93,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
     }
 
-    public UpgradeLevel GetUpgradeLevel()
+    public int GetUpgradeLevel()
     {
         return _currentUpgradeLevel;
     }
@@ -107,9 +107,3 @@ public enum TileType
     Industrial
 }
 
-public enum UpgradeLevel
-{
-    Level1,
-    Level2,
-    Level3
-}
