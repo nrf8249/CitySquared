@@ -10,6 +10,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private bool _isOccupied;
     private GameObject _occupyingBuilding;
     private TileType _currentType;
+    private UpgradeLevel _currentUpgradeLevel;
 
     public void Init(bool isOffset)
     {
@@ -17,6 +18,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         _isOccupied = false;
         _occupyingBuilding = null;
         _currentType = TileType.Empty;
+        _currentUpgradeLevel = UpgradeLevel.Level1;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -35,9 +37,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             GridManager.Instance.SetSelectedTile(this);
             MenuManager.Instance.ShowCreationMenu(transform.position);
-
-            //_isOccupied = true;S
-            //_renderer.color = Color.red; // Example of changing color when occupied
+        }
+        else
+        {
+            GridManager.Instance.SetSelectedTile(this);
+            MenuManager.Instance.ShowUpgradeMenu(transform.position);
         }
     }
 
@@ -69,6 +73,30 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         return _currentType;
     }
+
+    public void UpgradeTile(UpgradeLevel level)
+    {
+        switch (level)
+        {
+            case UpgradeLevel.Level1:
+                // Implement logic for Level 1 upgrade
+                break;
+            case UpgradeLevel.Level2:
+                // Implement logic for Level 2 upgrade
+                break;
+            case UpgradeLevel.Level3:
+                // Implement logic for Level 3 upgrade
+                break;
+            default:
+                Debug.LogWarning("Invalid upgrade level");
+                break;
+        }
+    }
+
+    public UpgradeLevel GetUpgradeLevel()
+    {
+        return _currentUpgradeLevel;
+    }
 }
 
 public enum TileType
@@ -77,5 +105,11 @@ public enum TileType
     Residential,
     Commercial,
     Industrial
+}
 
+public enum UpgradeLevel
+{
+    Level1,
+    Level2,
+    Level3
 }

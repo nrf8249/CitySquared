@@ -34,7 +34,19 @@ public class MenuManager : MonoBehaviour
     //needs updating to match the creation menu, but for now we can just reuse the same position
     public void ShowUpgradeMenu(Vector2 position)
     {
-        var upgradeMenu = Instantiate(upgradeMenuPrefab, position, Quaternion.identity);
+        GameObject upgradeMenu = Instantiate(upgradeMenuPrefab, position, Quaternion.identity);
         upgradeMenu.transform.SetParent(canvas.transform, false); // Set the canvas as the parent of the menu
+        Vector2 screenPos = Camera.main.WorldToScreenPoint(position); // Convert world position to screen position
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvas.GetComponent<RectTransform>(),
+            screenPos,
+            null,
+            out Vector2 localPoint); // Convert screen position to local position in the canvas
+
+        RectTransform rt = upgradeMenu.GetComponent<RectTransform>();
+        rt.anchoredPosition = localPoint; // Set the anchored position of the menu to the local point
+
+        upgradeMenu.GetComponent<UpgradeMenu>().InitializeUpgradeMenu(); // Call the initialization method to set up the upgrade menu
     }
 }
