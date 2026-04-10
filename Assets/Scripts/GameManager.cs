@@ -4,6 +4,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public GameState State;
+    public GameObject startMenuUI;
 
     void Awake()
     {
@@ -12,6 +13,12 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        ChangeState(GameState.MainMenu);
+    }
+
+    public void StartGame() 
+    {
+        startMenuUI.SetActive(false);
         ChangeState(GameState.GenerateGrid);
     }
 
@@ -34,6 +41,7 @@ public class GameManager : MonoBehaviour
 
 public enum GameState
 {
+    MainMenu = -1,
     GenerateGrid = 0,
     GameRunning = 1,
     GameOver = 2
