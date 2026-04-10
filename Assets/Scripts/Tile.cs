@@ -23,12 +23,48 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (TutorialManager.Instance != null && TutorialManager.Instance.isTutorialActive)
+        {
+            if (!TutorialManager.Instance.CanClickTile(transform.position))
+            {
+                return;
+            }
+        }
         _highlight.SetActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (TutorialManager.Instance != null &&
+            TutorialManager.Instance.isTutorialActive &&
+            TutorialManager.Instance.tutorialStep == 1 &&
+            (Vector2)transform.position == TutorialManager.Instance.targetTilePos)
+        {
+            return;
+        }
+
         _highlight.SetActive(false);
+    }
+
+    public void ForceHighlight(bool isOn)
+    {
+        if (_highlight != null)
+        {
+            _highlight.SetActive(isOn);
+        }
+    }
+
+    public void SetSortingOrder(int order)
+    {
+        _renderer.sortingOrder = order;
+        if (_highlight != null)
+        {
+            SpriteRenderer highlightRenderer = _highlight.GetComponent<SpriteRenderer>();
+            if (highlightRenderer != null)
+            {
+                highlightRenderer.sortingOrder = order + 1; 
+            }
+        }
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -88,18 +124,10 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         switch (level)
         {
-            case 1:
-                // Implement logic for Level 1 upgrade
-                break;
-            case 2:
-                // Implement logic for Level 2 upgrade
-                break;
-            case 3:
-                // Implement logic for Level 3 upgrade
-                break;
-            default:
-                Debug.LogWarning("Invalid upgrade level");
-                break;
+            case 1: break;
+            case 2: break;
+            case 3: break;
+            default: Debug.LogWarning("Invalid upgrade level"); break;
         }
     }
 

@@ -140,4 +140,13 @@ public class GridManager : MonoBehaviour
             return 0; // Return a default value when no tile is selected
         }
     }
+
+    public Tile GetTileAtPosition(Vector2 pos)
+    {
+        if (_tiles.TryGetValue(pos, out Tile tile))
+        {
+            return tile;
+        }
+        return null;
+    }
 }
