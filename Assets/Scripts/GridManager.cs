@@ -57,7 +57,7 @@ public class GridManager : MonoBehaviour
         Debug.Log($"Selected tile at position: {tile.transform.position}");
     }
 
-    public int GetTileHappiness()
+    public int CalculateTileHappiness()
     {
         int happiness = 0;
         int numAdjacentResidential = 0;

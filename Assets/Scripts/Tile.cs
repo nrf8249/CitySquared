@@ -11,6 +11,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private GameObject _occupyingBuilding;
     private TileType _currentType;
     private int _currentUpgradeLevel;
+    private int _currentHappiness;
 
     public void Init(bool isOffset)
     {
@@ -19,6 +20,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         _occupyingBuilding = null;
         _currentType = TileType.Empty;
         _currentUpgradeLevel = 0;
+        _currentHappiness = 0;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -99,20 +101,25 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             case TileType.Empty:
                 _renderer.color = _baseColor; // Example: Set to base color for empty
                 _isOccupied = false; // Mark as not occupied when set to empty
+                _currentType = TileType.Empty; // Update current type
                 break;
             case TileType.Residential:
                 _renderer.color = Color.green; // Example: Set to green for residential
                 _isOccupied = true; // Mark as occupied when set to residential
+                _currentType = TileType.Residential; // Update current type
                 break;
             case TileType.Commercial:
                 _renderer.color = Color.blue; // Example: Set to blue for commercial
                 _isOccupied = true; // Mark as occupied when set to commercial
+                _currentType = TileType.Commercial; // Update current type
                 break;
             case TileType.Industrial:
                 _renderer.color = Color.red; // 
                 _isOccupied = true; // Mark as occupied when set to industrial
+                _currentType = TileType.Industrial; // Update current type
                 break;
         }
+        _currentHappiness = GridManager.Instance.CalculateTileHappiness(); // Update happiness based on the new tile type
     }
 
     public TileType GetTileType()
@@ -135,6 +142,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         return _currentUpgradeLevel;
     }
+
+    public int GetHappiness()
+    {
+        return _currentHappiness;
+    }   
 }
 
 public enum TileType
