@@ -1,7 +1,20 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CreationMenu : HoverMenu
 {
+    public Button residentialBtn;
+    public Button commercialBtn;
+
+    void Start()
+    {
+        if (TutorialManager.Instance != null && TutorialManager.Instance.isTutorialActive)
+        {
+            residentialBtn.gameObject.SetActive(false);
+            commercialBtn.gameObject.SetActive(false);
+        }
+    }
+
     public void OnResidentialButtonClicked()
     {
         // Implement building logic here
@@ -28,8 +41,12 @@ public class CreationMenu : HoverMenu
         Debug.Log("industrial button clicked!");
         Tile selectedTile = GridManager.Instance.GetSelectedTile();
         selectedTile.SetTileType(TileType.Industrial);
+
+        if (TutorialManager.Instance != null)
+        {
+            TutorialManager.Instance.OnBuildingCreated("Industrial");
+        }
+
         Destroy(gameObject);
-
-
     }
 }

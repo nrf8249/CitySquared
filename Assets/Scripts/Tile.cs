@@ -26,14 +26,24 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         _highlight.SetActive(true);
     }
 
-    public void OnPointerExit(PointerEventData eventData) 
-    { 
+    public void OnPointerExit(PointerEventData eventData)
+    {
         _highlight.SetActive(false);
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if(!_isOccupied)
+        if (TutorialManager.Instance != null && TutorialManager.Instance.isTutorialActive)
+        {
+            if (!TutorialManager.Instance.CanClickTile(transform.position))
+            {
+                return;
+            }
+
+            TutorialManager.Instance.OnTargetTileClicked();
+        }
+
+        if (!_isOccupied)
         {
             GridManager.Instance.SetSelectedTile(this);
             MenuManager.Instance.ShowCreationMenu(transform.position);
@@ -63,7 +73,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 _isOccupied = true; // Mark as occupied when set to commercial
                 break;
             case TileType.Industrial:
-                _renderer.color = Color.orange; // Example: Set to gray for industrial
+                _renderer.color = Color.red; // 
                 _isOccupied = true; // Mark as occupied when set to industrial
                 break;
         }
@@ -106,4 +116,3 @@ public enum TileType
     Commercial,
     Industrial
 }
-

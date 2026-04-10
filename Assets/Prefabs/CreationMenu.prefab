@@ -225,6 +225,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 367e078046994d542b43ea9b6639d788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CreationMenu
+  residentialBtn: {fileID: 4292496719233452931}
+  commercialBtn: {fileID: 1119761417124450041}
 --- !u!1 &5172584612675165172
 GameObject:
   m_ObjectHideFlags: 0

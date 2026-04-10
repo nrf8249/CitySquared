@@ -30,7 +30,8 @@ public class GameManager : MonoBehaviour
                 GridManager.Instance.GenerateGrid();
                 break;
             case GameState.GameRunning:
-                // Start game logic here
+                // Start tutorial
+                TutorialManager.Instance.StartTutorial();
                 break;
             case GameState.GameOver:
                 // Handle game over logic here
