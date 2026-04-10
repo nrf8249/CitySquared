@@ -8,7 +8,11 @@ public class TutorialManager : MonoBehaviour
     [Header("Tutorial UI Elements")]
     public GameObject tutorialCanvas;
     public GameObject dialogBox;
-    public TextMeshProUGUI dialogText;
+    public GameObject welcomeText;
+    public GameObject hintText1;
+    public GameObject hintText2;
+    public GameObject rulesText;
+    public GameObject endText;
     public GameObject maskImage;
 
     [Header("Tutorial State")]
@@ -27,27 +31,53 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
+    private void HideAllTexts()
+    {
+        welcomeText.SetActive(false);
+        hintText1.SetActive(false);
+        hintText2.SetActive(false);
+        rulesText.SetActive(false);
+        endText.SetActive(false);
+    }
+
     public void StartTutorial()
     {
         isTutorialActive = true;
-        tutorialStep = 1;
+        tutorialStep = 0;
         tutorialCanvas.SetActive(true);
         dialogBox.SetActive(true);
         maskImage.SetActive(true);
 
-        dialogText.text = "Welcome to the city!\n" +
-            "As the mayor, you need to zone areas on the grid.\n" +
-            "Now, click the highlighted tile to construct your first building.";
+        HideAllTexts();
+        welcomeText.SetActive(true);
+    }
 
-        Tile targetTile = GridManager.Instance.GetTileAtPosition(targetTilePos);
-        if (targetTile != null)
+    void Update()
+    {
+        if (!isTutorialActive) return;
+
+        if (tutorialStep == 0 && Input.GetMouseButtonDown(0))
         {
-            targetTile.ForceHighlight(true);
-            targetTile.SetSortingOrder(20);
+            tutorialStep = 1;
+            HideAllTexts();
+            hintText1.SetActive(true);
+
+            Tile targetTile = GridManager.Instance.GetTileAtPosition(targetTilePos);
+            if (targetTile != null)
+            {
+                targetTile.ForceHighlight(true);
+                targetTile.SetSortingOrder(20);
+            }
         }
-        else
+        else if (tutorialStep == 3 && Input.GetMouseButtonDown(0))
         {
-            Debug.LogError("error");
+            tutorialStep = 4;
+            HideAllTexts();
+            endText.SetActive(true);
+        }
+        else if (tutorialStep == 4 && Input.GetMouseButtonDown(0))
+        {
+            EndTutorial();
         }
     }
 
@@ -56,18 +86,9 @@ public class TutorialManager : MonoBehaviour
         if (tutorialStep == 1)
         {
             tutorialStep = 2;
-            dialogText.text = "Good job! Now, build an Industrial zone here.";
-
+            HideAllTexts();
+            hintText2.SetActive(true);
         }
-    }
-
-    public bool CanClickTile(Vector2 tilePos)
-    {
-        if (!isTutorialActive) return true;
-
-        if (tutorialStep == 1 && tilePos == targetTilePos) return true;
-
-        return false;
     }
 
     public void OnBuildingCreated(string buildingType)
@@ -83,32 +104,22 @@ public class TutorialManager : MonoBehaviour
                 targetTile.SetSortingOrder(0);
             }
 
-            dialogText.text = "Congratulations! You've successfully built the city's very first building!\n" +
-                              "\n" +
-                              "A building's Happiness is determined by the 8 tiles immediately surrounding it:\n" +
-                              "- Residential: Wants 5 Residential, 3 Commercial. " +
-                              "1-2 adjacent Industrial deducts 1 pt; more deducts 2 pts.\n" +
-                              "- Commercial: Wants 6 Residential, 2 Industrial.\n" +
-                              "- Industrial: Wants 3 Residential, 5 Commercial.\n\n" +
-                              "Plan your layout carefully to maximize your score! " +
-                              "Click anywhere on the screen to begin your mayoral journey!";
+            HideAllTexts();
+            rulesText.SetActive(true);
         }
+    }
+
+    public bool CanClickTile(Vector2 tilePos)
+    {
+        if (!isTutorialActive) return true;
+        if (tutorialStep == 1 && tilePos == targetTilePos) return true;
+        return false;
     }
 
     public void EndTutorial()
     {
-        if (tutorialStep == 3)
-        {
-            isTutorialActive = false;
-            tutorialCanvas.SetActive(false);
-        }
-    }
-
-    void Update()
-    {
-        if (tutorialStep == 3 && Input.GetMouseButtonDown(0))
-        {
-            EndTutorial();
-        }
+        isTutorialActive = false;
+        tutorialCanvas.SetActive(false);
+        RulesManager.Instance.ShowRulesButton();
     }
 }
