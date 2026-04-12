@@ -106,8 +106,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d723d63ff52ab440b3c8272489dc9a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
-  _baseColor: {r: 0.049172327, g: 0.8018868, b: 0.1353569, a: 1}
-  _offsetColor: {r: 0.07573871, g: 0.6981132, b: 0.14742589, a: 1}
+  _baseColor: {r: 0.0492613, g: 0.254717, b: 0.05059064, a: 1}
+  _offsetColor: {r: 0.03893734, g: 0.23584908, b: 0.03893734, a: 1}
   _renderer: {fileID: 1948754779886040082}
   _highlight: {fileID: 4266056314864207764}
 --- !u!61 &4035099183070358119
