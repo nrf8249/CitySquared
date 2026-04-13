@@ -10,7 +10,7 @@ public class UpgradeMenu : HoverMenu
 
         gameObject.transform.Find("TileType").gameObject.GetComponent<TextMeshProUGUI>().text = $"Tile Type: {selectedTile.GetTileType()}";
         gameObject.transform.Find("UpgradeLevel").gameObject.GetComponent<TextMeshProUGUI>().text = $"Upgrade Level: {selectedTile.GetUpgradeLevel()}";
-        gameObject.transform.Find("Happiness").gameObject.GetComponent<TextMeshProUGUI>().text = $"Happiness: {selectedTile.GetHappiness()}";
+        gameObject.transform.Find(" Happiness").gameObject.GetComponent<TextMeshProUGUI>().text = $"Happiness: {selectedTile.GetHappiness()}";
 
     }
 
