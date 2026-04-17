@@ -7,6 +7,8 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] private Color _baseColor, _offsetColor;
     [SerializeField] private SpriteRenderer _renderer;
     [SerializeField] private GameObject _highlight;
+    [SerializeField] private GameObject _numberOverlay;
+
 
     private bool _isOccupied;
     private GameObject _occupyingBuilding;
@@ -34,6 +36,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         _currentType = TileType.Empty;
         _currentUpgradeLevel = 0;
         _currentHappiness = 0;
+        _numberOverlay.SetActive(false);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -45,7 +48,8 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 return;
             }
         }
-        _highlight.SetActive(true);
+        else { _numberOverlay.SetActive(true);}
+            _highlight.SetActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -57,6 +61,8 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             return;
         }
+        else { _numberOverlay.SetActive(false); }
+
 
         _highlight.SetActive(false);
     }
