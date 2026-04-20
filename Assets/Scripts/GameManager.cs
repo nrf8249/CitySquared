@@ -15,7 +15,9 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        ChangeState(GameState.MainMenu);
+        ChangeState(GameState.MainMenu);                
+        MenuManager.Instance.UpdateEconomyMenu();
+
     }
 
     public void StartGame() 
@@ -31,16 +33,15 @@ public class GameManager : MonoBehaviour
             case GameState.MainMenu:
                 // Handle main menu logic here
                 break;
-            case GameState.GenerateGrid:
+            case GameState.GenerateGrid:                
                 GridManager.Instance.GenerateGrid();
                 break;
             case GameState.GameRunning:
                 // Start tutorial
                 TutorialManager.Instance.StartTutorial();
-                MenuManager.Instance.UpdateEconomyMenu();
                 break;
             case GameState.GameOver:
-                // Handle game over logic here
+                EndGame();
                 break;
         }
     }
