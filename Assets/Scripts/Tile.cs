@@ -9,12 +9,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     [SerializeField] private GameObject _highlight;
     [SerializeField] private GameObject _numberOverlay;
 
-
     private bool _isOccupied;
-    private GameObject _occupyingBuilding;
     private TileType _currentType;
     private int _currentUpgradeLevel;
-    private int _currentHappiness;
+    private int _prevHappiness = 0;
+    private int _currentHappiness = 0;
 
     private Vector2Int[] directions = new Vector2Int[]
     {
@@ -32,7 +31,6 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         _renderer.color = isOffset ? _offsetColor : _baseColor;
         _isOccupied = false;
-        _occupyingBuilding = null;
         _currentType = TileType.Empty;
         _currentUpgradeLevel = 0;
         _currentHappiness = 0;
@@ -48,8 +46,8 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 return;
             }
         }
-        else { _numberOverlay.SetActive(true);}
-            _highlight.SetActive(true);
+        else { _numberOverlay.SetActive(true); }
+        _highlight.SetActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -62,7 +60,6 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             return;
         }
         else { _numberOverlay.SetActive(false); }
-
 
         _highlight.SetActive(false);
     }
@@ -83,7 +80,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             SpriteRenderer highlightRenderer = _highlight.GetComponent<SpriteRenderer>();
             if (highlightRenderer != null)
             {
-                highlightRenderer.sortingOrder = order + 1; 
+                highlightRenderer.sortingOrder = order + 1;
             }
         }
     }
@@ -114,28 +111,27 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void SetTileType(TileType type)
     {
-        // Implement logic to change the tile's appearance and functionality based on the type
         switch (type)
         {
             case TileType.Empty:
-                _renderer.color = _baseColor; // Example: Set to base color for empty
-                _isOccupied = false; // Mark as not occupied when set to empty
-                _currentType = TileType.Empty; // Update current type
+                _renderer.color = _baseColor;
+                _isOccupied = false;
+                _currentType = TileType.Empty;
                 break;
             case TileType.Residential:
-                _renderer.color = Color.green; // Example: Set to green for residential
-                _isOccupied = true; // Mark as occupied when set to residential
-                _currentType = TileType.Residential; // Update current type
+                _renderer.color = Color.green;
+                _isOccupied = true;
+                _currentType = TileType.Residential;
                 break;
             case TileType.Commercial:
-                _renderer.color = Color.blue; // Example: Set to blue for commercial
-                _isOccupied = true; // Mark as occupied when set to commercial
-                _currentType = TileType.Commercial; // Update current type
+                _renderer.color = Color.blue;
+                _isOccupied = true;
+                _currentType = TileType.Commercial;
                 break;
             case TileType.Industrial:
-                _renderer.color = Color.red; // 
-                _isOccupied = true; // Mark as occupied when set to industrial
-                _currentType = TileType.Industrial; // Update current type
+                _renderer.color = Color.red;
+                _isOccupied = true;
+                _currentType = TileType.Industrial;
                 break;
         }
         OnTileChanged((int)transform.position.x, (int)transform.position.y);
@@ -144,8 +140,9 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public void OnTileChanged(int x, int y)
     {
         Debug.Log($"Tile at ({x}, {y}) changed to {_currentType}");
-        UpdateHappiness(x, y);
-        UpgradeTile(_currentUpgradeLevel, 1);
+
+        // Update this tile
+        UpdateHappiness();
 
         // Also update neighbors since THEY are affected
         foreach (var dir in directions)
@@ -155,7 +152,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
             if (GridManager.Instance.InBounds(nx, ny))
             {
-                UpdateHappiness(nx, ny);
+                Tile neighbor = GridManager.Instance.GetTileAtPosition(new Vector2(nx, ny));
+                if (neighbor != null)
+                {
+                    neighbor.UpdateHappiness();
+                }
             }
         }
     }
@@ -176,10 +177,14 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return _currentUpgradeLevel;
     }
 
-    public void UpdateHappiness(int x, int y)
+    // Instance method: updates THIS tile's happiness and adjusts economy using this tile's delta
+    public void UpdateHappiness()
     {
-        Debug.Log($"Updating happiness for tile at ({x}, {y}) of type {_currentType}");
-        Tile current = GridManager.Instance.GetTileAtPosition(new Vector2(x, y));
+        _prevHappiness = _currentHappiness;
+
+        int x = (int)transform.position.x;
+        int y = (int)transform.position.y;
+
         int happiness = 0;
 
         foreach (var dir in directions)
@@ -193,75 +198,82 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             }
 
             Tile neighbor = GridManager.Instance.GetTileAtPosition(new Vector2(nx, ny));
-            int numAdjacentResidential = 0;
-            int numAdjacentIndustrial = 0;
-            int numAdjacentCommercial = 0;
-            if (neighbor != null)
+            if (neighbor == null) continue;
+
+            if (_currentType == TileType.Residential)
             {
-                if (current.GetTileType() == TileType.Residential)
+                if (neighbor.GetTileType() == TileType.Residential)
                 {
-                    if (neighbor.GetTileType() == TileType.Residential)
-                    {
-                        numAdjacentResidential++;
-                        if (numAdjacentResidential <= 5) happiness += 1;
-                    }
-                    else if (neighbor.GetTileType() == TileType.Commercial)
-                    {
-                        numAdjacentCommercial++;
-                        if (numAdjacentCommercial <= 3) happiness += 1;
-                    }
-                    else if (neighbor.GetTileType() == TileType.Industrial)
-                    {
-                        numAdjacentIndustrial++;
-                        if (numAdjacentIndustrial == 1) happiness -= 1;
-                        else if (numAdjacentIndustrial > 1) happiness -= 2;
-                    }
+                    happiness += 1; // each adjacent residential up to any cap can be handled later
                 }
-                if (current.GetTileType() == TileType.Commercial)
+                else if (neighbor.GetTileType() == TileType.Commercial)
                 {
-                    if (neighbor.GetTileType() == TileType.Residential)
-                    {
-                        numAdjacentResidential++;
-                        if (numAdjacentResidential <= 6) happiness += 1;
-                    }
-                    else if (neighbor.GetTileType() == TileType.Commercial)
-                    {
-                        numAdjacentCommercial++;
-                    }
-                    else if (neighbor.GetTileType() == TileType.Industrial)
-                    {
-                        numAdjacentIndustrial++;
-                        if (numAdjacentIndustrial <= 2) happiness += 1;
-                    }
+                    happiness += 1;
                 }
-                if (current.GetTileType() == TileType.Industrial)
+                else if (neighbor.GetTileType() == TileType.Industrial)
                 {
-                    if (neighbor.GetTileType() == TileType.Residential)
-                    {
-                        numAdjacentResidential++;
-                        if (numAdjacentResidential <= 3) happiness += 1;
-                    }
-                    else if (neighbor.GetTileType() == TileType.Commercial)
-                    {
-                        numAdjacentCommercial++;
-                        if (numAdjacentCommercial <= 5) happiness += 1;
-                    }
-                    else if (neighbor.GetTileType() == TileType.Industrial)
-                    {
-                        numAdjacentIndustrial++;
-                    }
+                    happiness -= 1;
                 }
             }
-            Debug.Log($"Calculated happiness for tile at ({x}, {y}) is {happiness} from {numAdjacentResidential} adjacent residential, {numAdjacentCommercial} adjacent commercial, {numAdjacentIndustrial} adjacent industrial");
+            else if (_currentType == TileType.Commercial)
+            {
+                if (neighbor.GetTileType() == TileType.Residential)
+                {
+                    happiness += 1;
+                }
+                else if (neighbor.GetTileType() == TileType.Industrial)
+                {
+                    happiness += 1;
+                }
+            }
+            else if (_currentType == TileType.Industrial)
+            {
+                if (neighbor.GetTileType() == TileType.Residential)
+                {
+                    happiness += 1;
+                }
+                else if (neighbor.GetTileType() == TileType.Commercial)
+                {
+                    happiness += 1;
+                }
+            }
+
+            // Optional debug per neighbor (safe access)
+            if (_prevHappiness < happiness)
+            {
+                Debug.Log($"Happiness increased for tile at ({x}, {y}) from {_prevHappiness} to {happiness} due to neighbor at ({nx}, {ny}) of type {neighbor.GetTileType()}");
+            }
+            else if (_prevHappiness > happiness)
+            {
+                Debug.Log($"Happiness decreased for tile at ({x}, {y}) from {_prevHappiness} to {happiness} due to neighbor at ({nx}, {ny}) of type {neighbor.GetTileType()}");
+            }
         }
-        current.transform.Find("Happiness").GetComponent<TextMeshPro>().text = happiness.ToString();
+
+        // Apply any caps/limits here (example caps from your prior logic)
+        // residential: max +5 from adjacent residential, +3 from adjacent commercial, industrial penalties as required
+        // If you need exact caps, compute counts separately and clamp accordingly.
+
+        // Update display and internal state
+        var happinessText = transform.Find("Happiness")?.GetComponent<TextMeshPro>();
+        if (happinessText != null)
+        {
+            happinessText.text = happiness.ToString();
+        }
+
         _currentHappiness = happiness;
+
+        // Adjust economy based on delta for THIS tile only
+        int delta = _currentHappiness - _prevHappiness;
+        if (delta != 0)
+        {
+            GameManager.Instance.ChangeCoins(delta);
+        }
     }
 
     public int GetHappiness()
     {
         return _currentHappiness;
-    }   
+    }
 }
 
 public enum TileType

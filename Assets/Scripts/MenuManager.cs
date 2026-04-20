@@ -88,4 +88,13 @@ public class MenuManager : MonoBehaviour
 
         rt.anchoredPosition = localPoint;
     }
+
+    public void UpdateEconomyMenu()
+    {
+        GameObject economyMenu = canvas.transform.Find("EconomyMenu")?.gameObject;
+        if (economyMenu != null)
+        {
+            economyMenu.GetComponent<EconomyMenu>().UpdateEconomy();
+        }
+    }
 }

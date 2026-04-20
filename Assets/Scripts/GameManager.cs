@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
     public GameState State;
     public GameObject startMenuUI;
 
+    private int coins = 30;
+
     void Awake()
     {
         Instance = this;
@@ -26,17 +28,42 @@ public class GameManager : MonoBehaviour
     {
         State = newState;
         switch (newState){   
+            case GameState.MainMenu:
+                // Handle main menu logic here
+                break;
             case GameState.GenerateGrid:
                 GridManager.Instance.GenerateGrid();
                 break;
             case GameState.GameRunning:
                 // Start tutorial
                 TutorialManager.Instance.StartTutorial();
+                MenuManager.Instance.UpdateEconomyMenu();
                 break;
             case GameState.GameOver:
                 // Handle game over logic here
                 break;
         }
+    }
+
+    public void ChangeCoins(int amount)
+    {
+        coins += amount;
+        MenuManager.Instance.UpdateEconomyMenu();
+        if (coins < 4)
+        {
+            ChangeState(GameState.GameOver);
+        }
+    }
+     public int GetCoins
+    {
+        get { return coins; }
+    }
+
+    private void EndGame()
+    {
+        // Implement game over logic here, such as showing a game over screen or resetting the game
+        Debug.Log("Game Over! You have run out of coins.");
+        startMenuUI.SetActive(true);
     }
 }
 
