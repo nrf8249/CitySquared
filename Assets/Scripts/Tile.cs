@@ -39,6 +39,8 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (GameManager.Instance.State != GameState.GameRunning) return;
+
         if (TutorialManager.Instance != null && TutorialManager.Instance.isTutorialActive)
         {
             if (!TutorialManager.Instance.CanClickTile(transform.position))
@@ -87,6 +89,8 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (GameManager.Instance.State == GameState.GameOver) return;
+
         if (TutorialManager.Instance != null && TutorialManager.Instance.isTutorialActive)
         {
             if (!TutorialManager.Instance.CanClickTile(transform.position))

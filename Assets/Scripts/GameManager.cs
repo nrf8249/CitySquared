@@ -1,10 +1,13 @@
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public GameState State;
     public GameObject startMenuUI;
+    public GameObject gameOverUI;
+
+    public static bool isRestarting = false;
 
     private int coins = 30;
 
@@ -15,7 +18,17 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        ChangeState(GameState.MainMenu);                
+        if (gameOverUI != null) gameOverUI.SetActive(false);
+        if (isRestarting)
+        {
+            startMenuUI.SetActive(false);
+            ChangeState(GameState.GenerateGrid);
+        }
+        else
+        {
+            ChangeState(GameState.MainMenu);
+        }
+
         MenuManager.Instance.UpdateEconomyMenu();
 
     }
@@ -38,7 +51,17 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.GameRunning:
                 // Start tutorial
-                TutorialManager.Instance.StartTutorial();
+                if (!isRestarting)
+                {
+                    TutorialManager.Instance.StartTutorial();
+                }
+                else
+                {
+                    if (RulesManager.Instance != null)
+                    {
+                        RulesManager.Instance.ShowRulesButton();
+                    }
+                }
                 break;
             case GameState.GameOver:
                 EndGame();
@@ -64,7 +87,15 @@ public class GameManager : MonoBehaviour
     {
         // Implement game over logic here, such as showing a game over screen or resetting the game
         Debug.Log("Game Over! You have run out of coins.");
-        startMenuUI.SetActive(true);
+        if (gameOverUI != null)
+        {
+            gameOverUI.SetActive(true);
+        }
+    }
+    public void RestartGame()
+    {
+        isRestarting = true;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
 
