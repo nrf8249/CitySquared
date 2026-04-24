@@ -4,6 +4,7 @@ using TMPro;
 
 public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
 {
+    [SerializeField] private Sprite[] _icons;
     [SerializeField] private Color _baseColor, _offsetColor;
     [SerializeField] private SpriteRenderer _renderer;
     [SerializeField] private GameObject _highlight;
@@ -138,6 +139,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 _currentType = TileType.Industrial;
                 break;
         }
+        _renderer.sprite = _icons[(int)_currentType];
         OnTileChanged((int)transform.position.x, (int)transform.position.y);
     }
 
