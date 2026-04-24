@@ -107,11 +107,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d723d63ff52ab440b3c8272489dc9a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
-  _icons:
-  - {fileID: 0}
-  - {fileID: 5276157976450818192, guid: fe07153323c15e5418dddaf7fb7bbb24, type: 3}
-  - {fileID: -9024087300701384196, guid: db604652f8e1f0d4bbf17feb1ab3bc0f, type: 3}
-  - {fileID: -6790433130990890783, guid: e8f21efd858815848b1d591f27cb15dc, type: 3}
   _baseColor: {r: 0.0492613, g: 0.254717, b: 0.05059064, a: 1}
   _offsetColor: {r: 0.03893734, g: 0.23584908, b: 0.03893734, a: 1}
   _renderer: {fileID: 1948754779886040082}
