@@ -1588,16 +1588,4 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8151406038508810093}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: -4444295154234376812}
-        m_TargetAssemblyTypeName: UpgradeMenu, Assembly-CSharp
-        m_MethodName: OnUpgradeButtonClicked
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []

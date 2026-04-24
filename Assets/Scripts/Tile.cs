@@ -15,20 +15,6 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private int _prevHappiness = 0;
     private int _currentHappiness = 0;
 
-    public int Happiness{
-        get { return _currentHappiness; }
-    }
-    public TileType TileType{
-        get { return _currentType; }
-    }
-    public int Level{
-        get { return _currentUpgradeLevel; }
-    }
-    public GameObject Highlight
-    {
-        get { return _highlight; }
-    }
-
     private Vector2Int[] directions = new Vector2Int[]
     {
         new Vector2Int(0, 1), // Up
@@ -157,34 +143,42 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void OnTileChanged(int x, int y)
     {
+        Debug.Log($"Tile at ({x}, {y}) changed to {_currentType}");
+
         // Update this tile
         UpdateHappiness();
 
         // Also update neighbors since THEY are affected
-        for (int i = (-1 * this.Level); i < this.Level + 1; i++)
+        foreach (var dir in directions)
         {
-            for (int j = (-1 * this.Level); j < this.Level + 1; j++)
-            {
-                int nx = x + i;
-                int ny = y + j;
+            int nx = x + dir.x;
+            int ny = y + dir.y;
 
-                if (GridManager.Instance.InBounds(nx, ny))
+            if (GridManager.Instance.InBounds(nx, ny))
+            {
+                Tile neighbor = GridManager.Instance.GetTileAtPosition(new Vector2(nx, ny));
+                if (neighbor != null)
                 {
-                    Tile neighbor = GridManager.Instance.GetTileAtPosition(new Vector2(nx, ny));
-                    if (neighbor != null)
-                    {
-                        neighbor.UpdateHappiness();
-                    }
+                    neighbor.UpdateHappiness();
                 }
             }
         }
+    }
+
+    public TileType GetTileType()
+    {
+        return _currentType;
     }
 
     public void UpgradeTile(int current, int increment)
     {
         int newLevel = current + increment;
         if (newLevel > 3) newLevel = 3; // Cap the upgrade level at 3
-        _currentUpgradeLevel = newLevel;
+    }
+
+    public int GetUpgradeLevel()
+    {
+        return _currentUpgradeLevel;
     }
 
     // Instance method: updates THIS tile's happiness and adjusts economy using this tile's delta
@@ -197,60 +191,65 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         int happiness = 0;
 
-        for (int i = (-1 * this.Level); i < this.Level + 1; i++)
+        foreach (var dir in directions)
         {
-            for (int j = (-1 * this.Level); j < this.Level + 1; j++)
+            int nx = x + dir.x;
+            int ny = y + dir.y;
+
+            if (nx < 0 || ny < 0 || nx >= GridManager.Instance.GetGridWidth() || ny >= GridManager.Instance.GetGridHeight())
             {
-                int nx = x + i;
-                int ny = y + j;
+                continue;
+            }
 
-                if (nx < 0 || ny < 0 || nx >= GridManager.Instance.GetGridWidth() || ny >= GridManager.Instance.GetGridHeight())
-                {
-                    continue;
-                }
+            Tile neighbor = GridManager.Instance.GetTileAtPosition(new Vector2(nx, ny));
+            if (neighbor == null) continue;
 
-                Tile neighbor = GridManager.Instance.GetTileAtPosition(new Vector2(nx, ny));
-                neighbor.Highlight.SetActive(true);
-                if (neighbor == null) continue;
+            if (_currentType == TileType.Residential)
+            {
+                if (neighbor.GetTileType() == TileType.Residential)
+                {
+                    happiness += 1; // each adjacent residential up to any cap can be handled later
+                }
+                else if (neighbor.GetTileType() == TileType.Commercial)
+                {
+                    happiness += 1;
+                }
+                else if (neighbor.GetTileType() == TileType.Industrial)
+                {
+                    happiness -= 1;
+                }
+            }
+            else if (_currentType == TileType.Commercial)
+            {
+                if (neighbor.GetTileType() == TileType.Residential)
+                {
+                    happiness += 1;
+                }
+                else if (neighbor.GetTileType() == TileType.Industrial)
+                {
+                    happiness += 1;
+                }
+            }
+            else if (_currentType == TileType.Industrial)
+            {
+                if (neighbor.GetTileType() == TileType.Residential)
+                {
+                    happiness += 1;
+                }
+                else if (neighbor.GetTileType() == TileType.Commercial)
+                {
+                    happiness += 1;
+                }
+            }
 
-                if (_currentType == TileType.Residential)
-                {
-                    if (neighbor.TileType == TileType.Residential)
-                    {
-                        happiness += 1; // each adjacent residential up to any cap can be handled later
-                    }
-                    else if (neighbor.TileType == TileType.Commercial)
-                    {
-                        happiness += 1;
-                    }
-                    else if (neighbor.TileType == TileType.Industrial)
-                    {
-                        happiness -= 1;
-                    }
-                }
-                else if (_currentType == TileType.Commercial)
-                {
-                    if (neighbor.TileType == TileType.Residential)
-                    {
-                        happiness += 1;
-                    }
-                    else if (neighbor.TileType == TileType.Industrial)
-                    {
-                        happiness += 1;
-                    }
-                }
-                else if (_currentType == TileType.Industrial)
-                {
-                    if (neighbor.TileType == TileType.Residential)
-                    {
-                        happiness += 1;
-                    }
-                    else if (neighbor.TileType == TileType.Commercial)
-                    {
-                        happiness += 1;
-                    }
-                }
-                neighbor.Highlight.SetActive(false);
+            // Optional debug per neighbor (safe access)
+            if (_prevHappiness < happiness)
+            {
+                Debug.Log($"Happiness increased for tile at ({x}, {y}) from {_prevHappiness} to {happiness} due to neighbor at ({nx}, {ny}) of type {neighbor.GetTileType()}");
+            }
+            else if (_prevHappiness > happiness)
+            {
+                Debug.Log($"Happiness decreased for tile at ({x}, {y}) from {_prevHappiness} to {happiness} due to neighbor at ({nx}, {ny}) of type {neighbor.GetTileType()}");
             }
         }
 
@@ -273,6 +272,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             GameManager.Instance.ChangeCoins(delta);
         }
+    }
+
+    public int GetHappiness()
+    {
+        return _currentHappiness;
     }
 }
 

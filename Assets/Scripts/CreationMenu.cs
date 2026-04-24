@@ -20,7 +20,6 @@ public class CreationMenu : HoverMenu
         // Implement building logic here
         Tile selectedTile = GridManager.Instance.GetSelectedTile();
         selectedTile.SetTileType(TileType.Residential);
-        selectedTile.UpgradeTile(selectedTile.Level, 1);
         if (GameManager.Instance.GetCoins < 4){
             // Not enough coins to build a residential tile
             Debug.Log("Not enough coins to build a residential tile!");
@@ -35,7 +34,6 @@ public class CreationMenu : HoverMenu
         // Implement building logic here
         Tile selectedTile = GridManager.Instance.GetSelectedTile();
         selectedTile.SetTileType(TileType.Commercial);
-        selectedTile.UpgradeTile(selectedTile.Level, 1);
         if (GameManager.Instance.GetCoins < 7){
             // Not enough coins to build a commercial tile
             Debug.Log("Not enough coins to build a commercial tile!");
@@ -51,7 +49,6 @@ public class CreationMenu : HoverMenu
         // Implement building logic here
         Tile selectedTile = GridManager.Instance.GetSelectedTile();
         selectedTile.SetTileType(TileType.Industrial);
-        selectedTile.UpgradeTile(selectedTile.Level, 1);
         if (GameManager.Instance.GetCoins < 5){
             // Not enough coins to build an industrial tile
             Debug.Log("Not enough coins to build an industrial tile!");
