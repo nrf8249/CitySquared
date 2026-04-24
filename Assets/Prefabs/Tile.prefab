@@ -112,8 +112,8 @@ MonoBehaviour:
   - {fileID: 5276157976450818192, guid: fe07153323c15e5418dddaf7fb7bbb24, type: 3}
   - {fileID: -9024087300701384196, guid: db604652f8e1f0d4bbf17feb1ab3bc0f, type: 3}
   - {fileID: -6790433130990890783, guid: e8f21efd858815848b1d591f27cb15dc, type: 3}
-  _baseColor: {r: 0.0492613, g: 0.254717, b: 0.05059064, a: 1}
-  _offsetColor: {r: 0.03893734, g: 0.23584908, b: 0.03893734, a: 1}
+  _baseColor: {r: 0.06274475, g: 0.2830189, b: 0.06274475, a: 1}
+  _offsetColor: {r: 0.042808827, g: 0.24528301, b: 0.042808827, a: 1}
   _renderer: {fileID: 1948754779886040082}
   _highlight: {fileID: 4266056314864207764}
   _numberOverlay: {fileID: 6690256309462799183}
@@ -246,7 +246,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.23529412}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.62352943}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

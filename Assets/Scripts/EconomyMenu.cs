@@ -14,6 +14,6 @@ public class EconomyMenu : MonoBehaviour
         // Placeholder for economy update logic
         // This could involve updating UI elements, recalculating costs, or other economy-related tasks
 
-        tmpro.text = $"Coins: {GameManager.Instance.GetCoins}"; // Example of updating a UI element with the current coin count
+        tmpro.text = $"Coins: {GameManager.Instance.Coins}"; // Example of updating a UI element with the current coin count
     }
 }

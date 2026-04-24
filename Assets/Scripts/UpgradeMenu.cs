@@ -10,7 +10,7 @@ public class UpgradeMenu : HoverMenu
 
         gameObject.transform.Find("TileType").gameObject.GetComponent<TextMeshProUGUI>().text = $"Tile Type: {selectedTile.GetTileType()}";
         gameObject.transform.Find("UpgradeLevel").gameObject.GetComponent<TextMeshProUGUI>().text = $"Upgrade Level: {selectedTile.GetUpgradeLevel()}";
-        gameObject.transform.Find(" Happiness").gameObject.GetComponent<TextMeshProUGUI>().text = $"Happiness: {selectedTile.GetHappiness()}";
+        gameObject.transform.Find("Happiness").gameObject.GetComponent<TextMeshProUGUI>().text = $"Happiness: {selectedTile.GetHappiness()}";
 
     }
 
@@ -19,7 +19,16 @@ public class UpgradeMenu : HoverMenu
         // Implement upgrade logic here
         Debug.Log("Upgrade button clicked!");
         Tile selectedTile = GridManager.Instance.GetSelectedTile();
-        //selectedTile.UpgradeTile(); 
+        if (GameManager.Instance.Coins < 10) // Assuming an upgrade costs 10 coins
+        {
+            Debug.Log("Not enough coins to upgrade!");
+            return;
+        }
+        else
+        {
+            GameManager.Instance.ChangeCoins(-10); // Deduct coins for the upgrade
+            selectedTile.UpgradeTile(selectedTile.GetUpgradeLevel(), 1);
+        }
         Destroy(gameObject);
     }
 }

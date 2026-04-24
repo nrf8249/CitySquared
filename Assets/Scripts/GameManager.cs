@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
             ChangeState(GameState.GameOver);
         }
     }
-     public int GetCoins
+     public int Coins
     {
         get { return coins; }
     }
