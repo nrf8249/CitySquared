@@ -170,7 +170,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 int nx = x + i;
                 int ny = y + j;
 
-                if (GridManager.Instance.InBounds(nx, ny) && nx != x && ny != y)
+                if (GridManager.Instance.InBounds(nx, ny))
                 {
                     Tile neighbor = GridManager.Instance.GetTileAtPosition(new Vector2(nx, ny));
                     if (neighbor != null)
@@ -206,7 +206,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 int nx = x + i;
                 int ny = y + j;
 
-                if (nx < 0 || ny < 0 || nx >= GridManager.Instance.GetGridWidth() || ny >= GridManager.Instance.GetGridHeight() || (nx == x && ny == y))
+                if (nx < 0 || ny < 0 || nx >= GridManager.Instance.GetGridWidth() || ny >= GridManager.Instance.GetGridHeight())
                 {
                     continue;
                 }
